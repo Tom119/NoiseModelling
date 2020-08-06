@@ -50,7 +50,7 @@ public class BezierContouring {
     boolean smooth = true;
     double smoothCoefficient = 1.0;
     double deltaPoints = 0.5; // minimal distance between bezier points
-    double epsilon = 0.05;
+    double epsilon = 1.0;
 
     int srid;
     public static final List<Double> NF31_133_ISO = Collections.unmodifiableList(Arrays.asList(35.0,40.0,45.0,50.0,55.0,60.0,65.0,70.0,75.0,80.0,200.0));
