@@ -135,6 +135,7 @@ class DroneProcessData {
 /** Read source database and compute the sound emission spectrum of roads sources **/
 @CompileStatic
 class DronePropagationProcessData extends PropagationProcessData {
+    static List<Integer> freq_lvl = Arrays.asList(PropagationProcessPathData.asOctaveBands(PropagationProcessPathData.DEFAULT_FREQUENCIES_THIRD_OCTAVE));
 
     protected List<double[]> wjSourcesD = new ArrayList<>()
 
@@ -157,7 +158,7 @@ class DronePropagationProcessData extends PropagationProcessData {
         double db_m4000 = 90
         double db_m8000 = 90
 
-        double[] res_d = new double[PropagationProcessPathData.freq_lvl.size()]
+        double[] res_d = new double[freq_lvl.size()]
 
         res_d = [db_m63, db_m125, db_m250, db_m500, db_m1000, db_m2000, db_m4000, db_m8000]
 
@@ -176,7 +177,12 @@ class DronePropagationProcessData extends PropagationProcessData {
 class DronePropagationProcessDataFactory implements PointNoiseMap.PropagationProcessDataFactory {
     @Override
     PropagationProcessData create(FastObstructionTest freeFieldFinder) {
-        return new DronePropagationProcessData(freeFieldFinder)
+        return new CarsPropagationProcessData(freeFieldFinder)
+    }
+
+    @Override
+    void initialize(Connection connection, PointNoiseMap pointNoiseMap) throws SQLException {
+
     }
 }
 
@@ -322,7 +328,7 @@ def run(input) {
         pointNoiseMap.setThreadCount(n_thread)
 
         // Init custom input in order to compute more than just attenuation
-        DronePropagationProcessDataFactory dronePropagationProcessDataFactory = new DronePropagationProcessDataFactory()
+        CarsPropagationProcessDataFactory dronePropagationProcessDataFactory = new CarsPropagationProcessDataFactory()
         pointNoiseMap.setPropagationProcessDataFactory(dronePropagationProcessDataFactory)
 
         RootProgressVisitor progressLogger = new RootProgressVisitor(1, true, 1);

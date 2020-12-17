@@ -8,11 +8,11 @@ Please install JAVA version v8.x. Currently only version 8 of Java is compatible
 
 - Download Java here : https://www.java.com/fr/download/
 
-- You can check if JAVA_HOME environnement variable is well settled to your last installed java folder using :literal:`echo %JAVA_HOME%` in your command prompt. You should have a result similar to :literal:`C:\\Program Files (x86)\\Java\\jre1.8.x\\`
+- You can check if JAVA_HOME environnement variable is well settled to your last installed java folder using :literal:`echo %JAVA_HOME%` (windows) or :literal:`echo $JAVA_HOME` (linux) in your command prompt. You should have a result similar to :literal:`C:\\Program Files (x86)\\Java\\jre1.8.x\\`
 
 -  If you don't have this result, it is probably because your JAVA_HOME environnement variable is not well settled. To set you JAVA_HOME environnement variable you can adapt (with :literal:`x` the JAVA version number) you installed and use the following command line : :literal:`setx JAVA_HOME  "C:\\Program Files (x86)\\Java\\jre.1.8.x"` in your command prompt. You can also refer to `this document`_ for example. 
 
-- You may have to reboot your command prompt after using the precedent command line before printing again :literal:`echo %JAVA_HOME%`.
+- You may have to reboot your command prompt after using the precedent command line before printing again :literal:`echo %JAVA_HOME%` (windows) or :literal:`echo $JAVA_HOME` (linux).
 
 .. warning::
     The command promprt should print :literal:`C:\\Program Files (x86)\\Java\\jre1.8.x\\` whithout the bin directory. If JAVA_HOME is settled as :literal:`C:\\Program Files (x86)\\Java\\jre1.8.x\\bin`, it will not work. It should also point to a JRE  (Java Runtime Environment) Java environnement and not JDK. 
@@ -26,9 +26,8 @@ Step 1: Download the latest release
 - Unzip the downloaded file into a chosen directory.
 
 .. note::
-    - Only from version 3.0, NoiseModelling releases include the user interface described in this tutorial. 
+    - Only from version 3.3, NoiseModelling releases include the user interface described in this tutorial. 
     - The chosen directory can be anywhere but be sure that you have write access. If you are using the computer of your company, the Program Files folder is probably not a good idea.
-    - The archive contains the required softwares in 2 folders: :literal:`geoserver` and :literal:`WPSBuilder`
 
 .. _Github : https://github.com/Ifsttar/NoiseModelling/releases
 
@@ -41,8 +40,8 @@ Those tools are included in the archive.
 
 To run the server, please execute "startup" from your own Geoserver folder :
 
-- Geoserver\\bin\\startup.bat for Windows Users 
-- Geoserver\\bin\\startup.sh for Linux Users (check authorize file execution in property of this file before)
+- NoiseModelling\\bin\\startup.bat for Windows Users 
+- NoiseModelling\\bin\\startup.sh for Linux Users (check authorize file execution in property of this file before)
 
 and wait until :literal:`INFO:oejs.Server:main:Started` is written in your command prompt.
 
@@ -59,7 +58,6 @@ Your local server is now started.
     You can consult it via your web browser : http://localhost:9580/geoserver/web/
     
     - **login (default):** admin
-    
     - **password (default):** admin
 
 .. warning::
@@ -80,13 +78,13 @@ Step 4: Upload files to database
 
 To compute your first noise map, you will need 5 layers: Buildings, Roads, Ground type, Topography (DEM) and Receivers.
 
-In the Geoserver\\data_dir\\data\\wpsdata folder, you will find 5 files (4 shapefiles and 1 geojson) corresponding to these layers.
+In the noisemodelling\\data_dir\\data\\wpsdata folder, you will find 5 files (4 shapefiles and 1 geojson) corresponding to these layers.
 
 You can import these layers in your database using the *Import File* or *Import Folder* blocks.
 
 - Drag *Import File* block into Builder window 
 - Select *Path of the input File* block and type ``data_dir/data/wpsdata/buildings.shp`` in the field **pathFile**: 
-- Then click on *Run Process* after selecting the yellow block
+- Then click on *Run Process* after selecting one of the sub-blocks of your process
 
 .. figure:: images/tutorial/Tutorial1_Image1bis.gif
    :align: center
@@ -101,7 +99,7 @@ Repeat this operation for other files:
 - ``data_dir/data/wpsdata/dem.geojson``
 
 .. note::   
-    You can find all files in your own Geoserver folder, at direction geoserver/data_dir/data/wpsdata/
+    You can find all files in your own NoiseModelling folder, at direction /data_dir/data/wpsdata/
 
 .. note::
     - if you have the message :literal:`Error opening database`, please refer to the note in Step 1.

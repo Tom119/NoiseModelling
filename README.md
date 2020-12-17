@@ -2,6 +2,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Documentation Status](https://readthedocs.org/projects/noisemodelling/badge/?version=latest)](https://noisemodelling.readthedocs.io/en/latest/?badge=latest)
 [![GitHub release](https://img.shields.io/github/release/Ifsttar/NoiseModelling)](https://github.com/Ifsttar/NoiseModelling/releases/)
+[![Gitter](https://img.shields.io/gitter/room/DAVFoundation/DAV-Contributors.svg?style=flat-square)](https://gitter.im/NoiseModelling/)
 
 NoiseModelling
 ======
@@ -33,10 +34,13 @@ For more information:
 - *ANR CENSE (ANR-16-CE22-0012) 2017-2021*
 - the Nature4cities (N4C) project, funded by European Union’s Horizon 2020 research and innovation programme under grant agreement No 730468
 
-*Institutional fundings :*
+*Institutional (public) fundings :*
 
 - *Univ Gustave Eiffel (formerly Ifsttar, formerly LCPC), CNRS, UBS, ECN, Cerema*
 
+*Private fundings :*
+
+- *Airbus Urban Mobilty*
 
 **Note : you can still use the [version 2.0](https://github.com/Ifsttar/NoiseModelling/tree/master) which is fully documented [here](https://github.com/Ifsttar/NoiseModelling/blob/master/wiki/Home.md).**
 

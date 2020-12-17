@@ -10,15 +10,15 @@
     <parent>
         <groupId>org.orbisgis</groupId>
         <artifactId>noisemodelling-parent</artifactId>
-        <version>3.0.1-SNAPSHOT</version>
-        <relativePath>../</relativePath>
+        <version>3.3.1</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <description>Translate light vehicle, heavy vehicle, public bus, tramway traffic into linear noise source. Then compute sound propagation and iso surface.</description>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.10</version>
+            <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -34,7 +34,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.10.1</version>
+            <version>2.9.10.5</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

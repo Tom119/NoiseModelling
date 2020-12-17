@@ -6,6 +6,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.index.strtree.STRtree;
 import org.noise_planet.noisemodelling.propagation.ComputeRays;
 import org.noise_planet.noisemodelling.propagation.ComputeRaysOut;
 import org.noise_planet.noisemodelling.propagation.FastObstructionTest;
@@ -33,16 +34,11 @@ public class PointNoiseMap extends JdbcNoiseMap {
     private PropagationProcessDataFactory propagationProcessDataFactory;
     private IComputeRaysOutFactory computeRaysOutFactory;
     private Logger logger = LoggerFactory.getLogger(PointNoiseMap.class);
-    private PropagationProcessPathData propagationProcessPathData = new PropagationProcessPathData();
     private int threadCount = 0;
 
     public PointNoiseMap(String buildingsTableName, String sourcesTableName, String receiverTableName) {
         super(buildingsTableName, sourcesTableName);
         this.receiverTableName = receiverTableName;
-    }
-
-    public void setPropagationProcessPathData(PropagationProcessPathData propagationProcessPathData) {
-        this.propagationProcessPathData = propagationProcessPathData;
     }
 
     public void setComputeRaysOutFactory(IComputeRaysOutFactory computeRaysOutFactory) {
@@ -188,16 +184,27 @@ public class PointNoiseMap extends JdbcNoiseMap {
         }
         geometryField = geometryFields.get(0);
         ResultSet rs = connection.createStatement().executeQuery("SELECT " + geometryField + " FROM " + receiverTableName);
-        Envelope refEnv = getCellEnv(mainEnvelope, 0,
-                0, getCellWidth(), getCellHeight());
+        // Construct RTree with cells envelopes
+        STRtree rtree = new STRtree();
+        for(int i = 0; i < gridDim; i++) {
+            for(int j = 0; j < gridDim; j++) {
+                Envelope refEnv = getCellEnv(mainEnvelope, i,
+                        j, getCellWidth(), getCellHeight());
+                rtree.insert(refEnv, new CellIndex(j, i));
+            }
+        }
+        // Iterate over receivers and look for intersecting cells
         try (SpatialResultSet srs = rs.unwrap(SpatialResultSet.class)) {
             while (srs.next()) {
                 Geometry pt = srs.getGeometry();
                 if(pt instanceof Point && !pt.isEmpty()) {
                     Coordinate ptCoord = pt.getCoordinate();
-                    CellIndex cellIndex = new CellIndex(Math.min(gridDim - 1, (int)((ptCoord.x - mainEnvelope.getMinX()) / refEnv.getWidth())), Math.min(gridDim - 1, (int)((ptCoord.y - mainEnvelope.getMinY()) / refEnv.getHeight())));
-                    // Increment value if cell exists, set 1 otherwise
-                    cellIndices.merge(cellIndex, 1, Integer::sum);
+                    List queryResult = rtree.query(new Envelope(ptCoord));
+                    for(Object o : queryResult) {
+                        if(o instanceof CellIndex) {
+                            cellIndices.merge((CellIndex) o, 1, Integer::sum);
+                        }
+                    }
                 }
             }
         }
@@ -217,6 +224,11 @@ public class PointNoiseMap extends JdbcNoiseMap {
                                         ProgressVisitor progression, Set<Long> skipReceivers) throws SQLException {
         PropagationProcessData threadData = prepareCell(connection, cellI, cellJ, progression, skipReceivers);
 
+        if(verbose) {
+            logger.info(String.format("This computation area contains %d receivers %d sound sources and %d buildings",
+                    threadData.receivers.size(), threadData.sourceGeometries.size(),
+                    threadData.freeFieldFinder.getBuildingCount()));
+        }
         IComputeRaysOut computeRaysOut;
         if(computeRaysOutFactory == null) {
             computeRaysOut = new ComputeRaysOut(false, propagationProcessPathData, threadData);
@@ -243,8 +255,18 @@ public class PointNoiseMap extends JdbcNoiseMap {
         return computeRaysOut;
     }
 
+    @Override
+    public void initialize(Connection connection, ProgressVisitor progression) throws SQLException {
+        super.initialize(connection, progression);
+        if(propagationProcessDataFactory != null) {
+            propagationProcessDataFactory.initialize(connection, this);
+        }
+    }
+
     public interface PropagationProcessDataFactory {
         PropagationProcessData create(FastObstructionTest freeFieldFinder);
+
+        void initialize(Connection connection, PointNoiseMap pointNoiseMap) throws SQLException;
     }
 
     public interface IComputeRaysOutFactory {
